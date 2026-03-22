@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Bug-IT</string>
+    <string name="report_a_bug">Report a Bug</string>
+    <string name="description_label">Description</string>
+    <string name="description_placeholder">Describe the bug you encountered…</string>
+    <string name="description_required">Description is required</string>
+    <string name="attach_screenshots">Attach Screenshots</string>
+    <string name="tap_to_attach_screenshots">Tap to attach screenshots</string>
+    <string name="submit_bug">Submit Bug</string>
+    <string name="selected_screenshot">Selected screenshot</string>
+    <string name="remove_image">Remove image</string>
+    <string name="add_image">Add image</string>
+    <string name="bug_submitted_success">Bug submitted ✅</string>
+    <string name="capture_screenshot">Capture Screenshot</string>
 </resources>

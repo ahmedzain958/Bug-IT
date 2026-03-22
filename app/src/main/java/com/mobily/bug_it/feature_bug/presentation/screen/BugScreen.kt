@@ -27,13 +27,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Screenshot
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,10 +47,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.mobily.bug_it.R
 import com.mobily.bug_it.feature_bug.presentation.state.BugUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +61,7 @@ fun BugScreen(
     state: BugUiState,
     onDescriptionChange: (String) -> Unit,
     onPickImage: () -> Unit,
+    onCaptureScreenshot: () -> Unit,
     onRemoveImage: (Uri) -> Unit,
     onSubmit: () -> Unit
 ) {
@@ -73,7 +79,7 @@ fun BugScreen(
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Report a Bug",
+                            text = stringResource(R.string.report_a_bug),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -93,17 +99,54 @@ fun BugScreen(
             OutlinedTextField(
                 value = state.description,
                 onValueChange = onDescriptionChange,
-                label = { Text("Description") },
-                placeholder = { Text("Describe the bug you encountered…") },
+                label = {
+                    Text(stringResource(R.string.description_label))
+                },
+                placeholder = {
+                    Text(stringResource(R.string.description_placeholder))
+                },
                 minLines = 4,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = state.isDescriptionError,
+                supportingText = if (state.isDescriptionError) {
+                    {
+                        Text(
+                            text = stringResource(R.string.description_required),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                } else null
             )
 
-            Text(
-                text = "Attach Screenshots",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.attach_screenshots),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                OutlinedButton(
+                    onClick = onCaptureScreenshot,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Screenshot,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.capture_screenshot),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
 
             if (state.imageUris.isNotEmpty()) {
                 LazyRow(
@@ -119,7 +162,7 @@ fun BugScreen(
                         ) {
                             AsyncImage(
                                 model = uri,
-                                contentDescription = "Selected screenshot",
+                                contentDescription = stringResource(R.string.selected_screenshot),
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )
@@ -136,7 +179,7 @@ fun BugScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "remove image",
+                                    contentDescription = stringResource(R.string.remove_image),
                                     tint = Color.White,
                                     modifier = Modifier.size(16.dp)
                                 )
@@ -161,14 +204,13 @@ fun BugScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "Add image",
+                                contentDescription = stringResource(R.string.add_image),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
                 }
             } else {
-                // Dashed placeholder to pick an image
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -195,7 +237,7 @@ fun BugScreen(
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Tap to attach screenshots",
+                            text = stringResource(R.string.tap_to_attach_screenshots),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -222,19 +264,21 @@ fun BugScreen(
                     )
                 } else {
                     Text(
-                        text = "Submit Bug",
+                        text = stringResource(R.string.submit_bug),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
             }
 
-            state.error?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
+            if (!state.isDescriptionError) {
+                state.error?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
         }
     }
@@ -247,6 +291,7 @@ fun PreviewBugScreen() {
         state = BugUiState(description = "Crash on login"),
         onDescriptionChange = {},
         onPickImage = {},
+        onCaptureScreenshot = {},
         onRemoveImage = {},
         onSubmit = {}
     )
