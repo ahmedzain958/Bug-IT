@@ -2,33 +2,37 @@ package com.mobily.bug_it.feature_bug.presentation.screen
 
 import android.app.Activity
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.PixelCopy
 import android.view.View
-import android.view.Window
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobily.bug_it.R
 import com.mobily.bug_it.feature_bug.presentation.state.BugEvent
 import com.mobily.bug_it.feature_bug.presentation.viewmodel.BugViewModel
 import java.io.File
 import java.io.FileOutputStream
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BugScreenContainer(
-    viewModel: BugViewModel = viewModel()
+    viewModel: BugViewModel,
+    onBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
@@ -68,7 +72,7 @@ fun BugScreenContainer(
                 e.printStackTrace()
             }
         } else {
-            val canvas = Canvas(bitmap)
+            val canvas = android.graphics.Canvas(bitmap)
             view.draw(canvas)
             onBitmapCaptured(bitmap)
         }
@@ -97,17 +101,21 @@ fun BugScreenContainer(
             }
         },
         onRemoveImage = viewModel::removeImage,
-        onSubmit = viewModel::submit
+        onSubmit = viewModel::submit,
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        }
     )
 
-    // One-time events
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 is BugEvent.BugSubmitted -> {
                     Toast.makeText(context, context.getString(R.string.bug_submitted_success), Toast.LENGTH_SHORT).show()
+                    onBack()
                 }
-
                 is BugEvent.ShowError -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }

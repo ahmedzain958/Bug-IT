@@ -5,7 +5,6 @@ plugins {
 }
 
 val bugUploadEndpoint = (project.findProperty("BUG_UPLOAD_ENDPOINT") as String?)?.trim().orEmpty()
-val imgbbApiKey = (project.findProperty("IMGBB_API_KEY") as String?)?.trim().orEmpty()
 
 android {
     namespace = "com.mobily.bug_it"
@@ -20,7 +19,6 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "BUG_UPLOAD_ENDPOINT", "\"$bugUploadEndpoint\"")
-        buildConfigField("String", "IMGBB_API_KEY", "\"$imgbbApiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -65,6 +63,7 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

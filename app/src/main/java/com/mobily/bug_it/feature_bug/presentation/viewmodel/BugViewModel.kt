@@ -58,7 +58,7 @@ class BugViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null, isDescriptionError = false) }
 
-            /*val result = repository.uploadBug(
+            val result = repository.uploadBug(
                 description = currentState.description,
                 imageUris = currentState.imageUris
             )
@@ -79,7 +79,7 @@ class BugViewModel(
                 // Keep this one because network/server errors aren't tied to a specific field
                 _events.emit(BugEvent.ShowError(message))
                 _state.update { it.copy(isLoading = false, error = message) }
-            }*/
+            }
         }
     }
 }

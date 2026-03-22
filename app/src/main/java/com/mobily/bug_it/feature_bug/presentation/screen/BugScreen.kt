@@ -30,7 +30,6 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Screenshot
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -63,7 +62,8 @@ fun BugScreen(
     onPickImage: () -> Unit,
     onCaptureScreenshot: () -> Unit,
     onRemoveImage: (Uri) -> Unit,
-    onSubmit: () -> Unit
+    onSubmit: () -> Unit,
+    navigationIcon: @Composable () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -84,7 +84,8 @@ fun BugScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                     }
-                }
+                },
+                navigationIcon = navigationIcon
             )
         }
     ) { innerPadding ->

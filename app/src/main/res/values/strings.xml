@@ -12,4 +12,9 @@
     <string name="add_image">Add image</string>
     <string name="bug_submitted_success">Bug submitted ✅</string>
     <string name="capture_screenshot">Capture Screenshot</string>
+    <string name="bug_list_title">Bug Reports</string>
+    <string name="no_bugs_found">No bug reports found</string>
+    <string name="retry">Retry</string>
+    <string name="reported_at">Reported at: %s</string>
+    <string name="device">Device: %s</string>
 </resources>
