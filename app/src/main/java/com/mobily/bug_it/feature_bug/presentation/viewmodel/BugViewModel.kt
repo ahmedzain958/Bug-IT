@@ -23,14 +23,18 @@ class BugViewModel : ViewModel() {
         _state.update { it.copy(description = text) }
     }
 
-    fun setImage(uri: Uri) {
-        _state.update { it.copy(imageUri = uri) }
+    fun addImages(uris: List<Uri>) {
+        _state.update { it.copy(imageUris = it.imageUris + uris) }
+    }
+
+    fun removeImage(uri: Uri) {
+        _state.update { it.copy(imageUris = it.imageUris - uri) }
     }
 
     fun submit() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            delay(1500) // simulate API
+            delay(1500)
             if (_state.value.description.isBlank()) {
                 _events.emit(BugEvent.ShowError("Description is required"))
             } else {

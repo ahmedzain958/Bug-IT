@@ -4,7 +4,7 @@ import android.net.Uri
 
 data class BugUiState(
     val description: String = "",
-    val imageUri: Uri? = null,
+    val imageUris: List<Uri> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )

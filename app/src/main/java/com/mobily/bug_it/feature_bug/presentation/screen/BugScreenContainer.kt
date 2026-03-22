@@ -20,19 +20,18 @@ fun BugScreenContainer(
     val context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let { viewModel.setImage(it) }
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        viewModel.addImages(uris)
     }
 
     BugScreen(
         state = state,
         onDescriptionChange = viewModel::onDescriptionChange,
         onPickImage = { launcher.launch("image/*") },
+        onRemoveImage = viewModel::removeImage,
         onSubmit = viewModel::submit
     )
-
-    // One-time events
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
