@@ -5,10 +5,10 @@ Bug-IT is a lightweight Android utility designed to streamline bug reporting. It
 ## 📱 Screenshots
 
 <p align="center">
-  <img src="docs/image_selection.png" width="22%" />
-  <img src="docs/intent_sharing.png" width="22%" />
-  <img src="docs/validation.png" width="22%" />
-  <img src="docs/bug_details.png" width="22%" />
+  <img src="docs/image_selection.jpeg" width="22%" />
+  <img src="docs/intent_sharing.jpeg" width="22%" />
+  <img src="docs/validation.jpeg" width="22%" />
+  <img src="docs/bug_details.jpeg" width="22%" />
   <img src="docs/googlesheet.png" width="22%" />
 </p>
 
