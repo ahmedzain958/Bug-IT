@@ -8,16 +8,17 @@ import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,6 +28,8 @@ import com.mobily.bug_it.feature_bug.presentation.screen.BugListScreen
 import com.mobily.bug_it.feature_bug.presentation.screen.BugScreenContainer
 import com.mobily.bug_it.feature_bug.presentation.viewmodel.BugListViewModel
 import com.mobily.bug_it.feature_bug.presentation.viewmodel.BugViewModel
+import com.mobily.bug_it.ui.theme.BugITTheme
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
 
@@ -39,8 +42,10 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
 
         setContent {
-            BugApp(bugViewModel, shouldNavigateToAddBug.value) {
-                shouldNavigateToAddBug.value = false
+            BugITTheme {
+                BugApp(bugViewModel, shouldNavigateToAddBug.value) {
+                    shouldNavigateToAddBug.value = false
+                }
             }
         }
     }
@@ -94,19 +99,21 @@ fun BugApp(
 ) {
     val navController = rememberNavController()
     var selectedBug by remember { mutableStateOf<BugReportPayload?>(null) }
-    
-    // Handle conditional navigation when intent is received
-    LaunchedEffect(navigateToCreate) {
-        if (navigateToCreate) {
-            navController.navigate("add_bug") {
-                // Pop up to the start destination to ensure a clean back stack
-                popUpTo(navController.graph.startDestinationId)
-            }
-            onNavigated()
-        }
-    }
+    var showSplash by remember { mutableStateOf(true) }
 
-    MaterialTheme {
+    if (showSplash) {
+        SplashScreen { showSplash = false }
+    } else {
+        // Handle conditional navigation when intent is received
+        LaunchedEffect(navigateToCreate) {
+            if (navigateToCreate) {
+                navController.navigate("add_bug") {
+                    popUpTo(navController.graph.startDestinationId)
+                }
+                onNavigated()
+            }
+        }
+
         NavHost(navController = navController, startDestination = "bug_list") {
             composable("bug_list") {
                 val listViewModel: BugListViewModel = viewModel()
@@ -136,6 +143,43 @@ fun BugApp(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun SplashScreen(onTimeout: () -> Unit) {
+    LaunchedEffect(Unit) {
+        delay(2000)
+        onTimeout()
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Bug-IT",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 40.sp
+                ),
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Icon(
+                imageVector = Icons.Default.BugReport,
+                contentDescription = null,
+                modifier = Modifier.size(100.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Report bugs instantly",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+            )
         }
     }
 }

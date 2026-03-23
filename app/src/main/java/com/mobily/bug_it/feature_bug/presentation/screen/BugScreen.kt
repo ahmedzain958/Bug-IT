@@ -46,6 +46,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,7 +56,7 @@ import coil3.compose.AsyncImage
 import com.mobily.bug_it.R
 import com.mobily.bug_it.feature_bug.presentation.state.BugUiState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.ui.ExperimentalComposeUiApi::class)
 @Composable
 fun BugScreen(
     state: BugUiState,
@@ -65,6 +67,9 @@ fun BugScreen(
     onSubmit: () -> Unit,
     navigationIcon: @Composable () -> Unit = {}
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -250,7 +255,11 @@ fun BugScreen(
 
             // Submit button
             Button(
-                onClick = onSubmit,
+                onClick = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                    onSubmit()
+                },
                 enabled = !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()

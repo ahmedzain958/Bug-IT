@@ -1,5 +1,6 @@
 package com.mobily.bug_it.feature_bug.presentation.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -58,14 +60,22 @@ fun BugListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.bug_list_title)) },
-                actions = {
-                    IconButton(onClick = onRefresh) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+            Column {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.bug_list_title)) },
+                    actions = {
+                        IconButton(onClick = onRefresh) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        }
                     }
+                )
+                if (state.isLoading && state.bugs.isNotEmpty()) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
-            )
+            }
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddBug) {
@@ -108,6 +118,15 @@ fun BugListScreen(
                         BugItem(bug = bug, onClick = { onBugClick(bug) })
                     }
                 }
+            }
+            
+            // Semi-transparent overlay while loading to indicate background work
+            if (state.isLoading && state.bugs.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.3f))
+                )
             }
         }
     }
