@@ -1,8 +1,8 @@
 package com.mobily.bug_it.feature_bug.presentation.viewmodel
 
-import android.content.Context
+import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobily.bug_it.feature_bug.data.BugRepository
 import com.mobily.bug_it.feature_bug.presentation.state.BugEvent
@@ -14,12 +14,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BugViewModel(
-    private val context: Context? = null,
-    private val repository: BugRepository = BugRepository(context)
-) : ViewModel() {
+class BugViewModel(application: Application) : AndroidViewModel(application) {
+    
+    private val repository = BugRepository(application)
+    
     private val _state = MutableStateFlow(BugUiState())
     val state = _state.asStateFlow()
+    
     private val _events = MutableSharedFlow<BugEvent>()
     val events = _events.asSharedFlow()
 
@@ -76,7 +77,6 @@ class BugViewModel(
                 }
             }.onFailure { throwable ->
                 val message = throwable.message ?: "Failed to upload bug"
-                // Keep this one because network/server errors aren't tied to a specific field
                 _events.emit(BugEvent.ShowError(message))
                 _state.update { it.copy(isLoading = false, error = message) }
             }

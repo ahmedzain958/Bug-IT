@@ -54,9 +54,10 @@ function doPost(e) {
     lock.tryLock(20000);
     const payload = JSON.parse(e.postData.contents);
     const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    // Get or create today's sheet based on the current date and the specified date format in the CONFIG constant.
     const tabName = Utilities.formatDate(new Date(), CONFIG.timezone, CONFIG.dateFormat);
     const sheet = getOrCreateSheet_(spreadsheet, tabName);
-
+    //append the new bug report to the sheet
     const imageUrlsString = (payload.imageUris || []).join("\n");
 
     sheet.appendRow([
@@ -77,6 +78,7 @@ function getOrCreateSheet_(spreadsheet, tabName) {
   let sheet = spreadsheet.getSheetByName(tabName);
   if (sheet) return sheet;
   sheet = spreadsheet.insertSheet(tabName);
+  //Sheet Header
   sheet.getRange(1, 1, 1, CONFIG.headers.length).setValues([CONFIG.headers]).setFontWeight("bold");
   sheet.setFrozenRows(1);
   return sheet;

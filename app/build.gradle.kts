@@ -5,6 +5,7 @@ plugins {
 }
 
 val bugUploadEndpoint = (project.findProperty("BUG_UPLOAD_ENDPOINT") as String?)?.trim().orEmpty()
+val imgbbApiKey = (project.findProperty("IMGBB_API_KEY") as String?)?.trim().orEmpty()
 
 android {
     namespace = "com.mobily.bug_it"
@@ -19,6 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "BUG_UPLOAD_ENDPOINT", "\"$bugUploadEndpoint\"")
+        buildConfigField("String", "IMGBB_API_KEY", "\"$imgbbApiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,12 +60,17 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
+    
+    // Coil for Image Loading
     implementation(libs.coil)
+    implementation(libs.coil.network) // REQUIRED for loading URLs
+    
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
     implementation(libs.androidx.navigation.compose)
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

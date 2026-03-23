@@ -94,7 +94,6 @@ fun BugDetailScreen(
             HorizontalDivider()
 
             DetailItem(label = "Reported At", value = bug.reportedAtIso)
-            DetailItem(label = "Device", value = bug.deviceModel)
         }
     }
 }

@@ -2,7 +2,6 @@ package com.mobily.bug_it.feature_bug.data
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import com.mobily.bug_it.feature_bug.data.model.BugReportPayload
 import com.mobily.bug_it.feature_bug.data.remote.BugUploadClient
@@ -19,17 +18,20 @@ class BugRepository(
         for (uri in imageUris) {
             val result = imageUploadClient?.uploadImage(uri)
             if (result?.isSuccess == true) {
-                imageUrls.add(result.getOrNull() ?: continue)
+                val url = result.getOrNull()
+                if (url != null) {
+                    imageUrls.add(url)
+                }
             } else {
-                Log.e("BugRepository", "Failed to upload image")
+                val error = result?.exceptionOrNull()?.message ?: "Unknown error"
+                Log.e("BugRepository", "Failed to upload image: $error")
             }
         }
 
         val payload = BugReportPayload(
             description = description.trim(),
             imageUris = imageUrls,
-            reportedAtIso = Instant.now().toString(),
-            deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}"
+            reportedAtIso = Instant.now().toString()
         )
 
         return uploadClient.upload(payload)

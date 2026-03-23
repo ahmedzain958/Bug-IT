@@ -3,7 +3,6 @@ package com.mobily.bug_it.feature_bug.presentation.screen
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.PixelCopy
@@ -22,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.graphics.createBitmap
 import com.mobily.bug_it.R
 import com.mobily.bug_it.feature_bug.presentation.state.BugEvent
 import com.mobily.bug_it.feature_bug.presentation.viewmodel.BugViewModel
@@ -46,35 +46,28 @@ fun BugScreenContainer(
 
     fun captureScreenshot(view: View, onBitmapCaptured: (Bitmap) -> Unit) {
         val window = (context as? Activity)?.window ?: return
-        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val locationOfViewInWindow = IntArray(2)
-            view.getLocationInWindow(locationOfViewInWindow)
-            try {
-                PixelCopy.request(
-                    window,
-                    android.graphics.Rect(
-                        locationOfViewInWindow[0],
-                        locationOfViewInWindow[1],
-                        locationOfViewInWindow[0] + view.width,
-                        locationOfViewInWindow[1] + view.height
-                    ),
-                    bitmap,
-                    { copyResult ->
-                        if (copyResult == PixelCopy.SUCCESS) {
-                            onBitmapCaptured(bitmap)
-                        }
-                    },
-                    Handler(Looper.getMainLooper())
-                )
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-        } else {
-            val canvas = android.graphics.Canvas(bitmap)
-            view.draw(canvas)
-            onBitmapCaptured(bitmap)
+        val bitmap = createBitmap(view.width, view.height)
+        val locationOfViewInWindow = IntArray(2)
+        view.getLocationInWindow(locationOfViewInWindow)
+        try {
+            PixelCopy.request(
+                window,
+                android.graphics.Rect(
+                    locationOfViewInWindow[0],
+                    locationOfViewInWindow[1],
+                    locationOfViewInWindow[0] + view.width,
+                    locationOfViewInWindow[1] + view.height
+                ),
+                bitmap,
+                { copyResult ->
+                    if (copyResult == PixelCopy.SUCCESS) {
+                        onBitmapCaptured(bitmap)
+                    }
+                },
+                Handler(Looper.getMainLooper())
+            )
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
         }
     }
 
@@ -113,9 +106,14 @@ fun BugScreenContainer(
         viewModel.events.collect { event ->
             when (event) {
                 is BugEvent.BugSubmitted -> {
-                    Toast.makeText(context, context.getString(R.string.bug_submitted_success), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.bug_submitted_success),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     onBack()
                 }
+
                 is BugEvent.ShowError -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
