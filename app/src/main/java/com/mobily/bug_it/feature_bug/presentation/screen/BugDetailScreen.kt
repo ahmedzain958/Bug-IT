@@ -29,11 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.mobily.bug_it.feature_bug.data.model.BugReportPayload
+import com.mobily.bug_it.feature_bug.domain.model.BugReport
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BugDetailScreen(
-    bug: BugReportPayload,
+    bug: BugReport,
     onBack: () -> Unit
 ) {
     Scaffold(
@@ -68,7 +69,7 @@ fun BugDetailScreen(
 
             HorizontalDivider()
 
-            if (bug.imageUris.isNotEmpty()) {
+            if (bug.imageUrls.isNotEmpty()) {
                 Text(
                     text = "Screenshots",
                     style = MaterialTheme.typography.titleMedium,
@@ -78,7 +79,7 @@ fun BugDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
-                    items(bug.imageUris) { url ->
+                    items(bug.imageUrls) { url ->
                         AsyncImage(
                             model = url,
                             contentDescription = null,

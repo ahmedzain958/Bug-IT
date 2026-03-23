@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 val bugUploadEndpoint = (project.findProperty("BUG_UPLOAD_ENDPOINT") as String?)?.trim().orEmpty()
@@ -9,14 +11,12 @@ val imgbbApiKey = (project.findProperty("IMGBB_API_KEY") as String?)?.trim().orE
 
 android {
     namespace = "com.mobily.bug_it"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 35 // Standard integer
 
     defaultConfig {
         applicationId = "com.mobily.bug_it"
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 35 // Standard integer
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "BUG_UPLOAD_ENDPOINT", "\"$bugUploadEndpoint\"")
@@ -44,11 +44,22 @@ android {
         buildConfig = true
     }
 }
+
+// Force all Kotlin dependencies to 2.1.0 to resolve the "2.3.0 metadata" conflict
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin") {
+            useVersion("2.1.0")
+        }
+    }
+}
+
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -61,15 +72,19 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     
-    // Coil for Image Loading
     implementation(libs.coil)
-    implementation(libs.coil.network) // REQUIRED for loading URLs
+    implementation(libs.coil.network)
     
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
+    
     implementation(libs.androidx.navigation.compose)
+    
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

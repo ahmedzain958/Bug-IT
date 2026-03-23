@@ -42,7 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.mobily.bug_it.R
-import com.mobily.bug_it.feature_bug.data.model.BugReportPayload
+import com.mobily.bug_it.feature_bug.domain.model.BugReport
 import com.mobily.bug_it.feature_bug.presentation.state.BugListUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +51,7 @@ fun BugListScreen(
     state: BugListUiState,
     onAddBug: () -> Unit,
     onRefresh: () -> Unit,
-    onBugClick: (BugReportPayload) -> Unit
+    onBugClick: (BugReport) -> Unit
 ) {
     // Refresh the list whenever the screen is shown
     LaunchedEffect(Unit) {
@@ -69,7 +69,7 @@ fun BugListScreen(
                         }
                     }
                 )
-                if (state.isLoading && state.bugs.isNotEmpty()) {
+                if (state.isRefreshing) {
                     LinearProgressIndicator(
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.primary
@@ -88,7 +88,7 @@ fun BugListScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            if (state.isLoading && state.bugs.isEmpty()) {
+            if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else if (state.error != null && state.bugs.isEmpty()) {
                 Column(
@@ -120,8 +120,8 @@ fun BugListScreen(
                 }
             }
             
-            // Semi-transparent overlay while loading to indicate background work
-            if (state.isLoading && state.bugs.isNotEmpty()) {
+            // Semi-transparent overlay while refreshing to indicate background work
+            if (state.isRefreshing) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -133,7 +133,7 @@ fun BugListScreen(
 }
 
 @Composable
-fun BugItem(bug: BugReportPayload, onClick: () -> Unit) {
+fun BugItem(bug: BugReport, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -146,7 +146,7 @@ fun BugItem(bug: BugReportPayload, onClick: () -> Unit) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val firstImageUrl = bug.imageUris.firstOrNull()
+            val firstImageUrl = bug.imageUrls.firstOrNull()
             if (firstImageUrl != null) {
                 AsyncImage(
                     model = firstImageUrl,

@@ -18,10 +18,6 @@ class ImageUploadClient(
 ) {
     suspend fun uploadImage(imageUri: Uri): Result<String> {
         return runCatching {
-            if (apiKey.isBlank() || apiKey == "YOUR_FREE_API_KEY") {
-                throw IllegalStateException("ImgBB API Key is missing. Update gradle.properties")
-            }
-
             val inputStream = contentResolver.openInputStream(imageUri)
                 ?: throw IllegalStateException("Cannot open image stream")
 

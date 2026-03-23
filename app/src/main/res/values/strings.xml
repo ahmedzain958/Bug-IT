@@ -17,4 +17,15 @@
     <string name="retry">Retry</string>
     <string name="reported_at">Reported at: %s</string>
     <string name="device">Device: %s</string>
+    
+    <!-- Bug Upload Exceptions -->
+    <string name="error_missing_endpoint">Google Script endpoint is missing. Please check gradle.properties.</string>
+    <string name="error_network_unavailable">No internet connection. Please check your network and try again.</string>
+    <string name="error_timeout">The request timed out. The server might be busy, please try again.</string>
+    <string name="error_http">Server error (%1$d). Please try again later.</string>
+    <string name="error_api">Api error: %1$s</string>
+    <string name="error_unknown">An unexpected error occurred during upload.</string>
+    <string name="error_image_upload_failed">Image upload failed</string>
+    <string name="error_cannot_open_image_stream">Cannot open image stream</string>
+    <string name="error_image_empty">Image is empty</string>
 </resources>

@@ -18,19 +18,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mobily.bug_it.feature_bug.data.model.BugReportPayload
+import com.mobily.bug_it.feature_bug.domain.model.BugReport
 import com.mobily.bug_it.feature_bug.presentation.screen.BugDetailScreen
 import com.mobily.bug_it.feature_bug.presentation.screen.BugListScreen
 import com.mobily.bug_it.feature_bug.presentation.screen.BugScreenContainer
 import com.mobily.bug_it.feature_bug.presentation.viewmodel.BugListViewModel
 import com.mobily.bug_it.feature_bug.presentation.viewmodel.BugViewModel
 import com.mobily.bug_it.ui.theme.BugITTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val bugViewModel: BugViewModel by viewModels()
@@ -98,7 +100,7 @@ fun BugApp(
     onNavigated: () -> Unit
 ) {
     val navController = rememberNavController()
-    var selectedBug by remember { mutableStateOf<BugReportPayload?>(null) }
+    var selectedBug by remember { mutableStateOf<BugReport?>(null) }
     var showSplash by remember { mutableStateOf(true) }
 
     if (showSplash) {
@@ -116,7 +118,7 @@ fun BugApp(
 
         NavHost(navController = navController, startDestination = "bug_list") {
             composable("bug_list") {
-                val listViewModel: BugListViewModel = viewModel()
+                val listViewModel: BugListViewModel = hiltViewModel()
                 val state by listViewModel.state.collectAsState()
                 
                 BugListScreen(

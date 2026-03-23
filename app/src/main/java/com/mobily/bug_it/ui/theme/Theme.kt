@@ -1,7 +1,9 @@
 package com.mobily.bug_it.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
@@ -19,12 +21,29 @@ private val DarkColorScheme = darkColorScheme(
     error = Color(0xFFCF6679)
 )
 
+private val LightColorScheme = lightColorScheme(
+    primary = Color(0xFF6200EE),
+    secondary = Color(0xFF03DAC6),
+    tertiary = Color(0xFF018786),
+    background = Color(0xFFFFFFFF),
+    surface = Color(0xFFFFFFFF),
+    onPrimary = Color.White,
+    onSecondary = Color.Black,
+    onTertiary = Color.White,
+    onBackground = Color.Black,
+    onSurface = Color.Black,
+    error = Color(0xFFB00020)
+)
+
 @Composable
 fun BugITTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+
     MaterialTheme(
-        colorScheme = DarkColorScheme,
+        colorScheme = colorScheme,
         typography = Typography,
         content = content
     )
