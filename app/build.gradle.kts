@@ -11,12 +11,12 @@ val imgbbApiKey = (project.findProperty("IMGBB_API_KEY") as String?)?.trim().orE
 
 android {
     namespace = "com.mobily.bug_it"
-    compileSdk = 35 // Standard integer
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.mobily.bug_it"
         minSdk = 28
-        targetSdk = 35 // Standard integer
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "BUG_UPLOAD_ENDPOINT", "\"$bugUploadEndpoint\"")
@@ -45,7 +45,6 @@ android {
     }
 }
 
-// Force all Kotlin dependencies to 2.1.0 to resolve the "2.3.0 metadata" conflict
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlin") {
@@ -86,11 +85,21 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     
+    // Unit Testing
     testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
+    
+    // UI Testing
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.hilt.android) // Hilt testing
+    kspAndroidTest(libs.hilt.compiler)
+    
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
